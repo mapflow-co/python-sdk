@@ -31,6 +31,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://mapflow.co"
-Documentation = "https://api.mapflow.co/docs"
-Repository = "https://github.com/mapflow/sdk-python"
+Documentation = "https://mapflow.readme.io/reference"
+Repository = "https://github.com/mapflow-co/python-sdk"
+"Bug Tracker" = "https://github.com/mapflow-co/python-sdk/issues"
 
