@@ -11,7 +11,7 @@ MapFlow is a SaaS platform for route optimization, delivery planning, and logist
 
 → **Website**: [https://mapflow.co](https://mapflow.co)  
 → **API Documentation**: [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)  
-→ **Get your API key**: [https://mapflow.co](https://mapflow.co)
+→ **Get your API key**: [app.mapflow.co → Settings → API Keys](https://app.mapflow.co)
 
 ---
 
@@ -117,7 +117,7 @@ print(f"Visit scheduled: {visit.id}")
 
 ## Authentication
 
-All requests require an API key sent as the `X-API-Key` header. Get your key from your [MapFlow account](https://mapflow.co).
+All requests require an API key sent as the `X-API-Key` header. Get your key from [app.mapflow.co → Settings → API Keys](https://app.mapflow.co).
 
 ```python
 client = MapFlowClient(
@@ -488,7 +488,7 @@ from mapflow import (
 try:
     customer = client.get_customer(customer_id)
 except AuthenticationError:
-    print("Invalid API key — check your credentials at https://mapflow.co")
+    print("Invalid API key — check your credentials at app.mapflow.co → Settings → API Keys")
 except NotFoundError:
     print("Customer not found")
 except ValidationError as e:
