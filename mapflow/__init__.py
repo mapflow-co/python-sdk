@@ -25,7 +25,7 @@ Hierarchical products (v2):
     ...     {"item": str(product_id), "quantity": 5}
     ... ])
 
-For more information, visit https://api.mapflow.co/docs
+For more information, visit https://mapflow.readme.io/reference
 """
 
 __version__ = "2.0.0"

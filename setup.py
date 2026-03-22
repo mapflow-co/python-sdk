@@ -14,7 +14,7 @@ setup(
     url="https://github.com/mapflow-co/python-sdk",
     project_urls={
         "Homepage": "https://mapflow.co",
-        "Documentation": "https://api.mapflow.co/docs",
+        "Documentation": "https://mapflow.readme.io/reference",
         "Bug Tracker": "https://github.com/mapflow-co/python-sdk/issues",
         "Source Code": "https://github.com/mapflow-co/python-sdk",
     },

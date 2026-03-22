@@ -231,7 +231,7 @@ Now that you're set up, here are some things to try:
    - Configure your vehicle fleet
 
 4. Get help:
-   - Documentation: https://api.mapflow.co/docs
+   - Documentation: https://mapflow.readme.io/reference
    - Support: support@mapflow.co
    - Examples: examples/ directory
 

@@ -5,12 +5,12 @@
 [![PyPI version](https://img.shields.io/pypi/v/mapflow-sdk.svg)](https://pypi.org/project/mapflow-sdk/)
 [![Python](https://img.shields.io/pypi/pyversions/mapflow-sdk.svg)](https://pypi.org/project/mapflow-sdk/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![API Docs](https://img.shields.io/badge/API-docs-green.svg)](https://api.mapflow.co/docs)
+[![API Docs](https://img.shields.io/badge/API-docs-green.svg)](https://mapflow.readme.io/reference)
 
 MapFlow is a SaaS platform for route optimization, delivery planning, and logistics management. This SDK gives Python developers full programmatic access to the MapFlow API — manage customers, warehouses, drivers, vehicles, delivery schedules, and hierarchical product structures from your own applications.
 
 → **Website**: [https://mapflow.co](https://mapflow.co)  
-→ **API Documentation**: [https://api.mapflow.co/docs](https://api.mapflow.co/docs)  
+→ **API Documentation**: [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)  
 → **Get your API key**: [https://mapflow.co](https://mapflow.co)
 
 ---
@@ -543,7 +543,7 @@ python examples/hierarchy_example.py
 ## Support
 
 - **Website**: [https://mapflow.co](https://mapflow.co)
-- **API Documentation**: [https://api.mapflow.co/docs](https://api.mapflow.co/docs)
+- **API Documentation**: [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)
 - **Email**: support@mapflow.co
 - **GitHub Issues**: [https://github.com/mapflow-co/python-sdk/issues](https://github.com/mapflow-co/python-sdk/issues)
 
