@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mapflow-sdk"
+version = "2.0.0"
+description = "Python SDK for MapFlow route optimization API - v2 with hierarchical product support"
+readme = "README.md"
+authors = [
+    { name = "MapFlow", email = "support@mapflow.co" }
+]
+license = { text = "MIT" }
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["mapflow", "route", "optimization", "logistics", "delivery", "api", "sdk"]
+dependencies = [
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+]
+
+[project.urls]
+Homepage = "https://mapflow.co"
+Documentation = "https://api.mapflow.co/docs"
+Repository = "https://github.com/mapflow/sdk-python"
+
