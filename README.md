@@ -2,8 +2,8 @@
 
 **Official Python SDK for [MapFlow](https://mapflow.co) — Route Optimization & Delivery Management API**
 
-[![PyPI version](https://img.shields.io/pypi/v/mapflow-sdk.svg)](https://pypi.org/project/mapflow-sdk/)
-[![Python](https://img.shields.io/pypi/pyversions/mapflow-sdk.svg)](https://pypi.org/project/mapflow-sdk/)
+[![PyPI version](https://img.shields.io/pypi/v/mapflow-co-sdk.svg)](https://pypi.org/project/mapflow-co-sdk/)
+[![Python](https://img.shields.io/pypi/pyversions/mapflow-co-sdk.svg)](https://pypi.org/project/mapflow-co-sdk/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![API Docs](https://img.shields.io/badge/API-docs-green.svg)](https://mapflow.readme.io/reference)
 
@@ -66,7 +66,7 @@ MapFlow is a SaaS platform for route optimization, delivery planning, and logist
 ## Installation
 
 ```bash
-pip install mapflow-sdk
+pip install mapflow-co-sdk
 ```
 
 Install from source:

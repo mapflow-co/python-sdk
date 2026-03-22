@@ -8,7 +8,7 @@ Ce fichier démontre comment utiliser la gestion des conteneurs:
 - Cas d'usage e-commerce: produits dans colis
 
 Prérequis:
-    pip install mapflow-sdk>=2.0.0
+    pip install mapflow-co-sdk>=2.0.0
 
 Configuration:
     export MAPFLOW_API_KEY="votre_api_key"

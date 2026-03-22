@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="mapflow-sdk",
+    name="mapflow-co-sdk",
     version="2.0.0",
     author="MapFlow",
     author_email="support@mapflow.co",
