@@ -1,47 +1,29 @@
 # MapFlow Python SDK
 
-**Official Python SDK for [MapFlow](https://mapflow.co) — Route Optimization & Delivery Management API**
+**Official Python SDK for [MapFlow](https://mapflow.co) — Route Optimization & Delivery Management API**  
+**SDK Python officiel pour [MapFlow](https://mapflow.co) — Optimisation de Tournées & Gestion Logistique**
 
 [![PyPI version](https://img.shields.io/pypi/v/mapflow-co-sdk.svg)](https://pypi.org/project/mapflow-co-sdk/)
 [![Python](https://img.shields.io/pypi/pyversions/mapflow-co-sdk.svg)](https://pypi.org/project/mapflow-co-sdk/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![API Docs](https://img.shields.io/badge/API-docs-green.svg)](https://mapflow.readme.io/reference)
 
-MapFlow is a SaaS platform for route optimization, delivery planning, and logistics management. This SDK gives Python developers full programmatic access to the MapFlow API — manage customers, warehouses, drivers, vehicles, delivery schedules, and hierarchical product structures from your own applications.
+---
+
+🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
+
+---
+
+<a name="english"></a>
+## 🇬🇧 English
+
+[MapFlow](https://mapflow.co) is a SaaS platform for **route optimization**, **delivery planning**, and **logistics management**. This SDK gives Python developers full programmatic access to the MapFlow API — manage customers, warehouses, drivers, vehicles, delivery schedules, and hierarchical product structures directly from your applications.
 
 → **Website**: [https://mapflow.co](https://mapflow.co)  
-→ **API Documentation**: [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)  
+→ **API Reference**: [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)  
 → **Get your API key**: [app.mapflow.co → Settings → API Keys](https://app.mapflow.co)
 
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Authentication](#authentication)
-- [Core Resources](#core-resources)
-  - [Customers](#customers)
-  - [Delivery Locations](#delivery-locations)
-  - [Warehouses](#warehouses)
-  - [Drivers & Pickers](#drivers--pickers)
-  - [Vehicles](#vehicles)
-  - [Product Catalog](#product-catalog)
-  - [Container Hierarchy (v2)](#container-hierarchy-v2)
-  - [Visits & Scheduling](#visits--scheduling)
-  - [Visit Products](#visit-products)
-  - [Tags](#tags)
-- [Pagination](#pagination)
-- [Bulk Operations](#bulk-operations)
-- [Error Handling](#error-handling)
-- [Examples](#examples)
-- [Support](#support)
-
----
-
-## Features
+### Features
 
 - **Full API coverage** — customers, locations, warehouses, drivers, vehicles, catalog, visits, and more
 - **Hierarchical product structures** — pallets containing packages containing products (v2)
@@ -53,17 +35,7 @@ MapFlow is a SaaS platform for route optimization, delivery planning, and logist
 - **Verbose mode** — built-in request/response logging for debugging
 - **Python 3.8+** compatible
 
----
-
-## Requirements
-
-- Python ≥ 3.8
-- `requests >= 2.31.0`
-- `pydantic >= 2.0.0`
-
----
-
-## Installation
+### Installation
 
 ```bash
 pip install mapflow-co-sdk
@@ -77,14 +49,11 @@ cd python-sdk
 pip install -e .
 ```
 
----
-
-## Quick Start
+### Quick Start
 
 ```python
 from mapflow import MapFlowClient, CustomerType, VisitType, ItemType
 
-# Initialize the client
 client = MapFlowClient(api_key="your-api-key")
 
 # Create a customer
@@ -113,89 +82,205 @@ visit = client.create_visit({
 print(f"Visit scheduled: {visit.id}")
 ```
 
----
-
-## Authentication
-
-All requests require an API key sent as the `X-API-Key` header. Get your key from [app.mapflow.co → Settings → API Keys](https://app.mapflow.co).
+### Authentication
 
 ```python
 client = MapFlowClient(
-    api_key="your-api-key",          # required
+    api_key="your-api-key",             # required — get it at app.mapflow.co → Settings → API Keys
     base_url="https://api.mapflow.co",  # optional — default shown
-    timeout=30,                       # optional — seconds
-    verbose=False                     # optional — logs requests/responses
+    timeout=30,                          # optional — seconds
+    verbose=False                        # optional — logs requests/responses
 )
+```
+
+### Core Resources
+
+| Resource | Methods |
+|----------|---------|
+| **Customers** | `create/get/list/update/patch/delete_customer`, `get_customer_locations`, `customer_bulk_action` |
+| **Delivery Locations** | `create/get/list/update/patch/delete_delivery_location` |
+| **Global Customers** | `create_global_customer` — creates customer + location + contact + opening hours atomically |
+| **Warehouses** | `create/get/list/update/patch/delete_warehouse`, `set_default_warehouse` |
+| **Contacts** | `create/get/list/update/patch/delete_contact` |
+| **Opening Hours** | `create/get/list/update/patch/delete_opening_hours` |
+| **Product Catalog** | `create/get/list/update/patch/delete_delivery_item`, hierarchy methods |
+| **Container Hierarchy** | `set_container_contents`, `get_delivery_item_hierarchy`, `add/remove_content_from_container` |
+| **Drivers & Pickers** | `create/get/list/update/patch/delete_driver_picker`, `reset_driver_picker_password` |
+| **Vehicles** | `create/get/list/update/patch/delete_vehicle` |
+| **Visits** | `create/get/list/update/patch/delete_visit` |
+| **Visit Products** | `create/get/list/update/patch/delete_visit_product`, `visit_product_bulk_action` |
+| **Tags** | `create/get/list/update/patch/delete_tag` |
+
+### Container Hierarchy (v2)
+
+```python
+from mapflow import ItemType, WeightUnit
+
+# Create a pallet → boxes → products
+pallet = client.create_delivery_item({"name": "Export Pallet", "item_type": ItemType.PALLET, "weight": 25})
+box    = client.create_delivery_item({"name": "Laptop Box",    "item_type": ItemType.PACKAGE, "weight": 0.5})
+laptop = client.create_delivery_item({"name": "Laptop Pro",    "item_type": ItemType.PRODUCT, "weight": 2.1, "selling_price": 2499.0})
+
+client.set_container_contents(box.id,    [{"item": str(laptop.id), "quantity": 5}])
+client.set_container_contents(pallet.id, [{"item": str(box.id),    "quantity": 3}])
+
+hierarchy = client.get_delivery_item_hierarchy(pallet.id)
+print(f"Total: {hierarchy.total_weight_kg} kg — {hierarchy.total_selling_price} EUR")
+```
+
+### Error Handling
+
+```python
+from mapflow import AuthenticationError, NotFoundError, ValidationError, RateLimitError
+
+try:
+    customer = client.get_customer(customer_id)
+except AuthenticationError:
+    print("Invalid API key — check app.mapflow.co → Settings → API Keys")
+except NotFoundError:
+    print("Customer not found")
+except ValidationError as e:
+    print(f"Validation error: {e.message} — {e.response}")
+except RateLimitError:
+    print("Rate limit exceeded — slow down requests")
+```
+
+### Pagination
+
+```python
+page = client.list_customers(page=1, page_size=20)
+print(f"Total: {page.count} — Pages: {page.total_pages}")
+for customer in page.results:  # typed as List[Customer]
+    print(customer.display_name)
+```
+
+### Examples
+
+```bash
+export MAPFLOW_API_KEY="your-api-key"
+python examples/hierarchy_example.py
+python examples/visit_products_example.py
 ```
 
 ---
 
-## Core Resources
+<a name="français"></a>
+## 🇫🇷 Français
 
-### Customers
+[MapFlow](https://mapflow.co) est une plateforme SaaS d'**optimisation de tournées**, de **planification de livraisons** et de **gestion logistique**. Ce SDK Python donne aux développeurs un accès programmatique complet à l'API MapFlow — gérez vos clients, entrepôts, chauffeurs, véhicules, tournées de livraison et catalogues produits directement depuis vos applications.
 
-Manage individual and business customers including billing details, VAT numbers, and SIRET.
+**Mots-clés** : optimisation de tournées · logiciel de planification de livraisons · gestion de flotte · logistique du dernier kilomètre · planification d'itinéraires · tournée de livraison · optimisateur de tournées · gestion logistique Python · API livraison Python · SDK logistique
+
+→ **Site web** : [https://mapflow.co](https://mapflow.co)  
+→ **Documentation API** : [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)  
+→ **Obtenir votre clé API** : [app.mapflow.co → Paramètres → Clés API](https://app.mapflow.co)
+
+### Fonctionnalités
+
+- **Couverture complète de l'API** — clients, lieux de livraison, entrepôts, chauffeurs, véhicules, catalogue, visites
+- **Structures produit hiérarchiques** — palettes contenant des colis contenant des produits (v2)
+- **Modèles Pydantic v2** — objets requête/réponse typés avec validation automatique
+- **Réponses paginées** — `PaginatedResponse[T]` générique avec désérialisation automatique
+- **Actions en lot** — activer, désactiver, mettre à jour, taguer plusieurs enregistrements en une requête
+- **Entrées flexibles** — passez des modèles Pydantic ou des dictionnaires simples
+- **Gestion des erreurs enrichie** — exceptions typées avec codes HTTP et détails de l'API
+- **Mode verbose** — journalisation intégrée des requêtes/réponses pour le débogage
+- **Compatible Python 3.8+**
+
+### Installation
+
+```bash
+pip install mapflow-co-sdk
+```
+
+Installation depuis les sources :
+
+```bash
+git clone https://github.com/mapflow-co/python-sdk.git
+cd python-sdk
+pip install -e .
+```
+
+### Démarrage rapide
 
 ```python
-from mapflow import MapFlowClient, CustomerType
+from mapflow import MapFlowClient, CustomerType, VisitType, ItemType
 
-client = MapFlowClient(api_key="your-api-key")
+client = MapFlowClient(api_key="votre-cle-api")
 
-# Create
+# Créer un client
 customer = client.create_customer({
     "customer_type": CustomerType.COMPANY,
-    "company_name": "Acme Corporation",
-    "email": "contact@acme.com",
-    "phone": "+33123456789",
-    "billing_address": "123 Rue de la Paix",
-    "billing_zip_code": "75001",
-    "billing_city": "Paris",
-    "billing_country": "FR",
-    "siret": "12345678901234"
+    "company_name": "Acme Corp",
+    "email": "contact@acme.com"
 })
 
-# List with filters
-customers = client.list_customers(
-    is_active=True,
-    customer_type="company",
-    search="Acme"
-)
-for c in customers.results:
-    print(c.display_name, c.email)
-
-# Read / Update / Delete
-customer = client.get_customer(customer.id)
-client.patch_customer(customer.id, {"notes": "VIP client"})
-client.delete_customer(customer.id)
-
-# Get all delivery locations for a customer
-locations = client.get_customer_locations(customer.id)
-```
-
-### Delivery Locations
-
-Physical addresses where deliveries or pickups take place, with geolocation and access constraints.
-
-```python
+# Créer un lieu de livraison
 location = client.create_delivery_location({
     "customer": str(customer.id),
-    "name": "Main Warehouse",
-    "address": "456 Avenue des Champs",
-    "zip_code": "75008",
-    "city": "Paris",
-    "country": "FR",
-    "latitude": 48.8566,
-    "longitude": 2.3522,
-    "truck_access": True,
-    "loading_dock": True,
-    "max_weight_kg": 5000
+    "name": "Siège Social",
+    "address": "42 Rue de la Paix",
+    "zip_code": "75001",
+    "city": "Paris"
 })
 
-# Filter
-locations = client.list_delivery_locations(city="Paris", truck_access=True)
+# Planifier une visite de livraison
+visit = client.create_visit({
+    "delivery_location": str(location.id),
+    "visit_type": VisitType.DELIVERY,
+    "visit_date": "2026-04-01"
+})
+
+print(f"Visite planifiée : {visit.id}")
 ```
 
-**Global Customers** — create a customer, location, contact, and opening hours in a single atomic request:
+### Authentification
+
+```python
+client = MapFlowClient(
+    api_key="votre-cle-api",             # requis — obtenez-la sur app.mapflow.co → Paramètres → Clés API
+    base_url="https://api.mapflow.co",   # optionnel — valeur par défaut
+    timeout=30,                           # optionnel — en secondes
+    verbose=False                         # optionnel — journalise les requêtes/réponses
+)
+```
+
+### Ressources principales
+
+| Ressource | Description |
+|-----------|-------------|
+| **Clients** | Gestion des clients individuels et entreprises avec adresse de facturation, SIRET, TVA |
+| **Lieux de livraison** | Adresses physiques avec géolocalisation, accès poids lourds, quai de chargement |
+| **Clients globaux** | Création atomique : client + lieu + contact + horaires d'ouverture en une seule requête |
+| **Entrepôts** | Bases opérationnelles de la flotte — points de départ/arrivée, équipements, capacités |
+| **Catalogue produits** | Produits, services, colis et palettes avec poids, volume, prix et contraintes température |
+| **Hiérarchie conteneurs** | Palettes → colis → produits avec suivi des quantités et totaux calculés |
+| **Chauffeurs & Préparateurs** | Gestion des chauffeurs avec types de permis, certifications CACES, types de véhicules |
+| **Véhicules** | Flotte avec capacité, carburant, statut maintenance, coordonnées GPS |
+| **Visites** | Tournées de livraison, enlèvements, interventions avec horaires planifiés/réels |
+| **Produits de visite** | Association articles du catalogue aux visites avec quantités |
+| **Tags** | Étiquettes colorées pour les visites, chauffeurs et clients |
+
+### Hiérarchie de conteneurs (v2)
+
+```python
+from mapflow import ItemType, WeightUnit
+
+# Créer une palette → colis → produits
+palette = client.create_delivery_item({"name": "Palette Export", "item_type": ItemType.PALLET,   "weight": 25})
+colis   = client.create_delivery_item({"name": "Colis Laptops",  "item_type": ItemType.PACKAGE,  "weight": 0.5})
+laptop  = client.create_delivery_item({"name": "MacBook Pro",    "item_type": ItemType.PRODUCT,  "weight": 2.1, "selling_price": 2499.0})
+
+# Remplir le colis avec 5 laptops, puis la palette avec 3 colis
+client.set_container_contents(colis.id,   [{"item": str(laptop.id), "quantity": 5, "notes": "Fragile"}])
+client.set_container_contents(palette.id, [{"item": str(colis.id),  "quantity": 3, "position": 1}])
+
+# Inspecter la hiérarchie complète
+hierarchy = client.get_delivery_item_hierarchy(palette.id)
+print(f"Poids total : {hierarchy.total_weight_kg} kg — Valeur : {hierarchy.total_selling_price} EUR")
+```
+
+### Global Customers — création atomique
 
 ```python
 global_customer = client.create_global_customer({
@@ -203,7 +288,7 @@ global_customer = client.create_global_customer({
     "company_name": "Tech Solutions SARL",
     "email": "contact@techsolutions.fr",
     "delivery_location": {
-        "name": "Head Office",
+        "name": "Bureau Principal",
         "address": "10 Rue de la Tech",
         "zip_code": "69001",
         "city": "Lyon"
@@ -211,325 +296,81 @@ global_customer = client.create_global_customer({
     "contact": {
         "first_name": "Marie",
         "last_name": "Martin",
-        "position": "Logistics Manager",
+        "position": "Responsable Logistique",
         "emails": ["marie@techsolutions.fr"],
         "is_primary": True
     },
     "opening_hours": [
-        {"day_of_week": 0, "opening_time": "09:00", "closing_time": "18:00"},
-        {"day_of_week": 1, "opening_time": "09:00", "closing_time": "18:00"}
+        {"day_of_week": 0, "opening_time": "09:00", "closing_time": "18:00"},  # Lundi
+        {"day_of_week": 1, "opening_time": "09:00", "closing_time": "18:00"},  # Mardi
     ]
 })
 ```
 
-### Warehouses
-
-Operational bases for your fleet — supports start/end points, loading docks, certifications, and multi-vehicle assignment.
+### Actions en lot
 
 ```python
-from mapflow import WarehouseType
+# Activer des clients en lot
+client.customer_bulk_action("activate", customer_ids=[id1, id2, id3])
 
-warehouse = client.create_warehouse({
-    "name": "Paris Nord Hub",
-    "code": "PARIS-01",
-    "warehouse_type": WarehouseType.HUB,
-    "address": "12 Rue Industrielle",
-    "zip_code": "93200",
-    "city": "Saint-Denis",
-    "latitude": 48.9356,
-    "longitude": 2.3539,
-    "opening_time": "08:00",
-    "closing_time": "18:00",
-    "is_start_point": True,
-    "is_end_point": True,
-    "max_vehicles": 50
-})
+# Ajouter des tags en lot
+client.customer_bulk_action("add_tags", customer_ids=[id1, id2], tag_ids=[tag.id])
 
-client.set_default_warehouse(warehouse.id)
+# Mettre à jour le statut des véhicules en lot
+client.vehicle_bulk_action("change_status", vehicle_ids=[v1, v2], new_status="maintenance")
+
+# Mettre à jour les quantités de visite en lot
+client.visit_product_bulk_action("multiply_quantity", visitproduct_ids=[vp1, vp2], quantity_multiplier="2.0")
 ```
 
-### Drivers & Pickers
-
-Manage drivers and warehouse order pickers with licence types, certifications, and vehicle capabilities.
+### Gestion des erreurs
 
 ```python
-from mapflow import UserRole, DriverLicenceType, VehicleType
+from mapflow import AuthenticationError, NotFoundError, ValidationError, RateLimitError, MapFlowError
 
-driver = client.create_driver_picker({
-    "email": "driver@example.com",
-    "first_name": "Jean",
-    "last_name": "Dupont",
-    "phone": "+33612345678",
-    "role": UserRole.DRIVER,
-    "password": "SecurePassword123!",
-    "confirm_password": "SecurePassword123!",
-    "has_valid_driving_license": True,
-    "driver_licence_type": [DriverLicenceType.B, DriverLicenceType.C],
-    "vehicle_types": [VehicleType.VAN_MEDIUM]
-})
-
-# Reset password
-info = client.reset_driver_picker_password(driver.id)
+try:
+    customer = client.get_customer(customer_id)
+except AuthenticationError:
+    print("Clé API invalide — vérifiez sur app.mapflow.co → Paramètres → Clés API")
+except NotFoundError:
+    print("Client introuvable")
+except ValidationError as e:
+    print(f"Erreur de validation : {e.message}")
+    print(f"Détails : {e.response}")
+except RateLimitError:
+    print("Limite de taux dépassée — ralentissez vos requêtes")
+except MapFlowError as e:
+    print(f"Erreur MapFlow {e.status_code} : {e.message}")
 ```
 
-### Vehicles
-
-Fleet management including capacity, fuel type, maintenance status, and GPS tracking.
-
-```python
-from mapflow import VehicleType, EnergyType, VehicleStatus
-
-vehicle = client.create_vehicle({
-    "name": "Van 01",
-    "license_plate": "AB-123-CD",
-    "vehicle_type": VehicleType.VAN_MEDIUM,
-    "brand": "Renault",
-    "model": "Master",
-    "year": 2023,
-    "energy_type": EnergyType.DIESEL,
-    "max_weight_kg": 1500,
-    "max_volume_m3": 12.0,
-    "status": VehicleStatus.AVAILABLE
-})
-```
-
-### Product Catalog
-
-Define products, services, packages, and pallets with weight, volume, pricing, and temperature constraints.
-
-```python
-from mapflow import ItemType, WeightUnit, VolumeUnit
-
-product = client.create_delivery_item({
-    "name": "Laptop Pro 16",
-    "reference": "PROD-001",
-    "item_type": ItemType.PRODUCT,
-    "weight": 2.1,
-    "weight_unit": WeightUnit.KG,
-    "length": 36, "width": 25, "height": 2,
-    "selling_price": 2499.00,
-    "is_fragile": True
-})
-
-# Filter catalog
-fragile = client.list_delivery_items(
-    item_type=ItemType.PRODUCT,
-    is_fragile=True,
-    weight_max=5.0
-)
-```
-
-### Container Hierarchy (v2)
-
-Organize products inside packages and pallets with full nesting support, quantity tracking, and computed weight/value totals.
-
-```python
-# Create a pallet
-pallet = client.create_delivery_item({
-    "name": "Export Pallet EU",
-    "item_type": ItemType.PALLET,
-    "weight": 25, "weight_unit": WeightUnit.KG
-})
-
-# Create a package inside the pallet
-box = client.create_delivery_item({
-    "name": "Laptop Box",
-    "item_type": ItemType.PACKAGE,
-    "weight": 0.5, "weight_unit": WeightUnit.KG
-})
-
-# Put 5 laptops in the box
-client.set_container_contents(box.id, [
-    {"item": str(product.id), "quantity": 5, "notes": "Fragile"}
-])
-
-# Put 3 boxes on the pallet
-client.set_container_contents(pallet.id, [
-    {"item": str(box.id), "quantity": 3, "position": 1}
-])
-
-# Inspect the full hierarchy
-hierarchy = client.get_delivery_item_hierarchy(pallet.id)
-print(f"Total weight: {hierarchy.total_weight_kg} kg")
-print(f"Total value: {hierarchy.total_selling_price} EUR")
-
-# Granular removal
-client.remove_content_from_container(pallet.id, box.id, quantity=1)
-
-# List only top-level items (not inside any container)
-roots = client.list_root_delivery_items()
-```
-
-### Visits & Scheduling
-
-Schedule delivery, pickup, or service stops at delivery locations.
-
-```python
-from mapflow import VisitType
-
-visit = client.create_visit({
-    "delivery_location": str(location.id),
-    "visit_type": VisitType.DELIVERY,
-    "visit_date": "2026-04-01",
-    "planned_start_time": "09:00",
-    "planned_end_time": "10:00",
-    "notes": "Ring bell at entrance"
-})
-
-# Filter visits
-visits = client.list_visits(
-    visit_date="2026-04-01",
-    visit_type="delivery",
-    status="planned"
-)
-```
-
-### Visit Products
-
-Link catalog items to a scheduled visit with quantities.
-
-```python
-# Assign a product to a visit
-visit_product = client.create_visit_product({
-    "visit": str(visit.id),
-    "product": str(product.id),
-    "quantity": 3
-})
-
-# Bulk quantity updates
-client.visit_product_bulk_action(
-    action="multiply_quantity",
-    visitproduct_ids=[vp1.id, vp2.id],
-    quantity_multiplier="2.0"
-)
-```
-
-### Tags
-
-Color-coded labels for visits, drivers, and customers.
-
-```python
-tag = client.create_tag({
-    "name": "Urgent",
-    "color": "#FF0000",
-    "description": "Priority deliveries"
-})
-
-# Assign tags to customers in bulk
-client.customer_bulk_action(
-    action="add_tags",
-    customer_ids=[c1.id, c2.id],
-    tag_ids=[tag.id]
-)
-```
-
----
-
-## Pagination
-
-All list endpoints return a `PaginatedResponse[T]` with full IDE autocomplete on results.
+### Pagination
 
 ```python
 page = client.list_customers(page=1, page_size=20)
+print(f"Total : {page.count} — Pages : {page.total_pages}")
 
-print(f"Total: {page.count}")
-print(f"Pages: {page.total_pages}")
-
-for customer in page.results:   # typed as List[Customer]
+for customer in page.results:  # typé List[Customer]
     print(customer.display_name)
 
-# Iterate all pages
+# Itérer sur toutes les pages
 page_num = 1
 while True:
     page = client.list_customers(page=page_num, page_size=50)
     for customer in page.results:
-        process(customer)
+        traiter(customer)
     if not page.next:
         break
     page_num += 1
 ```
 
----
+### Référence des enums
 
-## Bulk Operations
-
-Most resources support bulk actions to reduce round-trips.
-
-```python
-# Activate / deactivate
-client.customer_bulk_action("activate", customer_ids=[id1, id2, id3])
-client.vehicle_bulk_action("change_status", vehicle_ids=[v1, v2], new_status="maintenance")
-
-# Bulk tagging
-client.customer_bulk_action("add_tags", customer_ids=[id1, id2], tag_ids=[tag.id])
-
-# Bulk product updates
-client.delivery_item_bulk_action("update_fragile", delivery_item_ids=[p1, p2], is_fragile=True)
-client.visit_product_bulk_action("update_quantity", visitproduct_ids=[vp1, vp2], new_quantity=5)
-```
-
----
-
-## Error Handling
-
-The SDK raises typed exceptions for every HTTP error class.
-
-```python
-from mapflow import (
-    MapFlowError,
-    AuthenticationError,   # 401
-    ForbiddenError,        # 403
-    NotFoundError,         # 404
-    ValidationError,       # 400
-    RateLimitError,        # 429
-    ServerError            # 5xx
-)
-
-try:
-    customer = client.get_customer(customer_id)
-except AuthenticationError:
-    print("Invalid API key — check your credentials at app.mapflow.co → Settings → API Keys")
-except NotFoundError:
-    print("Customer not found")
-except ValidationError as e:
-    print(f"Validation error: {e.message}")
-    print(f"Details: {e.response}")
-except RateLimitError:
-    print("Rate limit exceeded — slow down requests")
-except ServerError:
-    print("MapFlow server error — try again later")
-except MapFlowError as e:
-    print(f"Error {e.status_code}: {e.message}")
-```
-
----
-
-## Examples
-
-The `examples/` directory contains ready-to-run scripts:
-
-| File | Description |
-|------|-------------|
-| `examples/hierarchy_example.py` | Pallets, packages, and products with quantities |
-| `examples/visit_products_example.py` | Assigning catalog items to delivery visits |
-
-Run any example after setting your API key:
-
-```bash
-export MAPFLOW_API_KEY="your-api-key"
-python examples/hierarchy_example.py
-```
-
----
-
-## Enums Reference
-
-| Enum | Values |
-|------|--------|
+| Enum | Valeurs |
+|------|---------|
 | `CustomerType` | `individual`, `company` |
 | `ItemType` | `PRODUCT`, `SERVICE`, `PACKAGE`, `PALLET` |
 | `VisitType` | `delivery`, `pickup`, `service`, `delivery_pickup` |
-| `VehicleType` | `bicycle`, `cargo_bike`, `motorcycle`, `van_small`, `van_medium`, `van_large`, `truck_small`, `truck_medium`, `truck_large`, `semi_trailer`, `refrigerated`, … |
+| `VehicleType` | `bicycle`, `cargo_bike`, `van_small`, `van_medium`, `van_large`, `truck_small`, `truck_medium`, `truck_large`, `semi_trailer`, `refrigerated`, … |
 | `VehicleStatus` | `available`, `in_use`, `maintenance`, `broken`, `retired` |
 | `EnergyType` | `gasoline`, `diesel`, `electric`, `hybrid`, `hydrogen` |
 | `DriverLicenceType` | `none`, `am`, `a1`, `a`, `b`, `c1`, `c`, `ce`, `d` |
@@ -542,13 +383,11 @@ python examples/hierarchy_example.py
 
 ## Support
 
-- **Website**: [https://mapflow.co](https://mapflow.co)
-- **API Documentation**: [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)
+- **Site web / Website**: [https://mapflow.co](https://mapflow.co)
+- **Documentation API**: [https://mapflow.readme.io/reference](https://mapflow.readme.io/reference)
 - **Email**: support@mapflow.co
 - **GitHub Issues**: [https://github.com/mapflow-co/python-sdk/issues](https://github.com/mapflow-co/python-sdk/issues)
 
----
-
-## License
+## Licence / License
 
 [MIT](LICENSE) © [MapFlow](https://mapflow.co)

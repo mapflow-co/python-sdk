@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="mapflow-co-sdk",
-    version="2.0.0",
+    version="2.0.1",
     author="MapFlow",
     author_email="support@mapflow.co",
     description="Python SDK for MapFlow route optimization API - v2 with hierarchical product support",

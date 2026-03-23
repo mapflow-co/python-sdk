@@ -28,7 +28,7 @@ Hierarchical products (v2):
 For more information, visit https://mapflow.readme.io/reference
 """
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 from .client import MapFlowClient
 from .exceptions import (

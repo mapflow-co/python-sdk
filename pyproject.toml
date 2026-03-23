@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mapflow-co-sdk"
-version = "2.0.0"
+version = "2.0.1"
 description = "Python SDK for MapFlow route optimization API - v2 with hierarchical product support"
 readme = "README.md"
 authors = [
